@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "7M+9JS3t1RmCkcYK3ISNRR+9HyE2NgktBq9T6nF0b63z19nsJuaGdT+marxta89KOOfpzOCCHnCH+Jw/au44cQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\logan\\source\\repos\\IMS_Setup_App\\IMS_Setup_App\\IMS_Setup_App.iOS\\IMS_Setup_App.iOS.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\logan\\.nuget\\packages\\system.numerics.vectors\\4.5.0\\system.numerics.vectors.4.5.0.nupkg.sha512",
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\xamarin.essentials\\1.6.1\\xamarin.essentials.1.6.1.nupkg.sha512",
+    "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\xamarin.forms\\5.0.0.2012\\xamarin.forms.5.0.0.2012.nupkg.sha512"
+  ],
+  "logs": []
+}
