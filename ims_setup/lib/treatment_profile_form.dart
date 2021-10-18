@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:starter_project/Models/all_models.dart';
 import 'package:starter_project/Database/sqlite.dart';
 
-TreatmentProfile treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[1],1,1,1)]);
+late TreatmentProfile treatmentProfile;
 final nameOfTreatment = TextEditingController();
 
 // Creating the treatment profile page
@@ -16,6 +16,8 @@ class AddTreatmentProfileForm extends StatefulWidget {
 class _AddTreatmentProfileFormState extends State<AddTreatmentProfileForm> {
   @override
   Widget build(BuildContext context){
+    // TODO: set the treatment profile if one was passed to be edited
+    set(null);
     return ListView(
       physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       shrinkWrap: true,
@@ -295,13 +297,30 @@ class _SaveButtonState extends State<SaveButton> {
   _pushedSave(){
     treatmentProfile.name = nameOfTreatment.text;
     SqliteDB.db.insertTreatmentProfile(treatmentProfile);
-      //TODO: Save muscle profiles and treatment profile and reload home page
+    reset();
+    //TODO: Save muscle profiles and treatment profile and reload home page
       //Save the treatmeant to treatment profiles
       // going to have to be a global variable
     // Can't be inside set state or it wont work.
     // Set state is specific for that widget
     // Navigator is a stack for the routes
     Navigator.of(context).pop();
+  }
+}
+
+// reset the variables for the page
+reset() {
+  treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[1],1,1,1)]);
+  nameOfTreatment.text = "";
+}
+
+// set the variables for the page
+set(var currentTreatmentProfile){
+  if(currentTreatmentProfile == null) {
+    treatmentProfile =
+        TreatmentProfile("", [MuscleProfile(muscles[1], 1, 1, 1)]);
+  } else {
+    treatmentProfile = currentTreatmentProfile;
   }
 }
 

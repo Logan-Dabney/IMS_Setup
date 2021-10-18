@@ -44,14 +44,14 @@ class SqliteDB {
   Future _onCreate(Database database, int version) async {
     await database.execute('''
           CREATE TABLE $treatmentProfileTable (
-            $columnId INTEGER PRIMARY KEY,
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnName TEXT NOT NULL
           )
           ''');
 
     await database.execute('''
           CREATE TABLE $muscleProfileTable (
-            $columnId INTEGER PRIMARY KEY,
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnMuscleId INTEGER NOT NULL,
             $columnTreatmentId INTEGER NOT NULL,
             $columnOrder INTEGER NOT NULL,
@@ -65,20 +65,20 @@ class SqliteDB {
   Future<List<TreatmentProfile>> getTreatmentProfiles() async {
     final db = await database;
 
-    var treatmentProfiles = await db.query(
+    var treatments = await db.query(
       treatmentProfileTable,
       columns: [columnId, columnName]
     );
 
-    List<TreatmentProfile> treatmentList = [];
+    List<TreatmentProfile> treatmentProfiles = [];
 
-    treatmentProfiles.forEach((treatment) async {
-      TreatmentProfile treatmentProfile = TreatmentProfile.fromMap(treatment);
+    for (int i = 0; i < treatments.length; i++){
+      TreatmentProfile treatmentProfile = TreatmentProfile.fromMap(treatments[i]);
       treatmentProfile.muscleProfiles = await SqliteDB.db.getMuscleProfiles(treatmentProfile.id!);
-      treatmentList.add(treatmentProfile);
-    });
+      treatmentProfiles.add(treatmentProfile);
+    }
 
-    return treatmentList;
+    return treatmentProfiles;
   }
 
   Future<TreatmentProfile> insertTreatmentProfile(TreatmentProfile treatmentProfile) async {
@@ -103,8 +103,9 @@ class SqliteDB {
     });
 
     return await datab.delete(
-      treatmentProfileTable,
-      whereArgs: [treatmentProfile.id]
+        treatmentProfileTable,
+        where:"id = ?",
+        whereArgs: [treatmentProfile.id]
     );
   }
 
@@ -162,6 +163,7 @@ class SqliteDB {
 
     return await db.delete(
       muscleProfileTable,
+      where: "$columnId = ?",
       whereArgs: [id]
     );
   }

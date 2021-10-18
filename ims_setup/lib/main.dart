@@ -5,17 +5,16 @@ import 'package:starter_project/Database/sqlite.dart';
 
 List<TreatmentProfile> treatmentProfiles = [];
 
-Future<void> main() async {
+void main() {
   runApp(const MyApp());
-  treatmentProfiles = await SqliteDB.db.getTreatmentProfiles();
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // set up the variables
     return MaterialApp(
       title: 'IMS Setup',
       theme: ThemeData(
@@ -46,12 +45,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text("Profiles"),
+          title: const Text("Treatments"),
           actions: [
           IconButton(icon: const Icon(Icons.add), onPressed: _addTreatmentProfile),
           IconButton(icon: const Icon(Icons.import_export), onPressed: _exportProfiles)
@@ -74,7 +72,12 @@ class _HomePage extends State<HomePage> {
             );
           }
       )
-    );
+    ).then((_) {
+      // This block runs when you have returned back to refresh the page
+      setState(() {
+        setVariables();
+      });
+    });
   }
 
   // Loads the export profiles page
@@ -82,50 +85,130 @@ class _HomePage extends State<HomePage> {
 
   }
 
-  _editTreatmentProfile(){
-//TODO: add database edit
-  }
-
-  _deleteTreatmentProfile(int i) async {
-//TODO: add database delete
-    SqliteDB.db.deleteTreatmentProfile(treatmentProfiles.removeAt(i));
-  }
-
   _addBody(){
-    // If there aren't any saved profiles show text to create on
-    if (treatmentProfiles.isEmpty){
-      _addTreatmentProfile;
-    }
+    return FutureBuilder(
+        future: setVariables(),
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot){
+          if(snapshot.connectionState == ConnectionState.done){
+            // If there aren't any saved profiles show text
+            if (treatmentProfiles.isEmpty){
+              return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "No Treatments",
+                        style: TextStyle(fontSize: 50, color: Colors.black26),
+                      )
+                    ]
+                  )
+              );
+            }
 
-    // If there are saved treatments display them
-    return
-      ListView.builder(
-        itemCount: treatmentProfiles.length,
-          physics: ClampingScrollPhysics(),
-          shrinkWrap: true,
-        itemBuilder: (context, i){
-          return Column(
-            children: [
-              Row(
-                //TODO: Edit so it looks better
-                children: [
-                  Text(
-                    treatmentProfiles[i].name,
-                    style: TextStyle(fontSize: 20),
-                  ),
+            // If there are saved treatments display them
+            return ListView.builder(
+                itemCount: treatmentProfiles.length,
+                physics: ClampingScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, i){
+                  return Column(
+                    children: [
+                      Row(
+                        //TODO: Edit so it looks better
+                          children: [
+                            Text(
+                              treatmentProfiles[i].name,
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile(i)),
+                            IconButton(icon: const Icon(Icons.delete), onPressed: () => _deleteTreatmentProfile(i)),
+                          ]
+                      ),
+                      const Divider(
+                        color: Colors.black26,
+                        thickness: 3,
+                      ),
+                    ],
+                  );
+                }
+                );
+          } else{
+            return Center(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Text(
+                        "No Treatments",
+                        style: TextStyle(fontSize: 50, color: Colors.black26),
+                      )
+                    ]
+                )
+            );
+          }
+        },
+    );
+  }
 
-                  IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile ),
-                  IconButton(icon: const Icon(Icons.delete), onPressed: _deleteTreatmentProfile(i)),
-                ]
-              ),
-              const Divider(
-                color: Colors.purpleAccent,
-                thickness: 3,
-              ),
-            ],
-          );
-        }
-        );
+  _editTreatmentProfile(int i){
+    //TODO: add database edit and new page to edit data
+    treatment_form.treatmentProfile = treatmentProfiles[i];
+  }
+
+  _deleteTreatmentProfile(int i) {
+//TODO: add database delete
+    SqliteDB.db.deleteTreatmentProfile(treatmentProfiles[i]);
+    treatmentProfiles.removeAt(i);
+    setState(() {
+      setVariables();
+    });
   }
 }
 
+Future<String> setVariables() async{
+  treatmentProfiles = await SqliteDB.db.getTreatmentProfiles();
+  return Future.value("download successful"); // return your response
+}
+
+// If there aren't any saved profiles show text to create on
+// if (treatmentProfiles.isEmpty){
+//   return Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: const [
+//           Text(
+//             "No Treatments",
+//             style: TextStyle(fontSize: 50, color: Colors.black26),
+//           )
+//         ]
+//       )
+//   );
+// }
+
+// If there are saved treatments display them
+// return
+//   ListView.builder(
+//       itemCount: treatmentProfiles.length,
+//       physics: ClampingScrollPhysics(),
+//       shrinkWrap: true,
+//       itemBuilder: (context, i){
+//         return Column(
+//           children: [
+//             Row(
+//               //TODO: Edit so it looks better
+//                 children: [
+//                   Text(
+//                     treatmentProfiles[i].name,
+//                     style: TextStyle(fontSize: 20),
+//                   ),
+//                   IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile(i)),
+//                   IconButton(icon: const Icon(Icons.delete), onPressed: () => _deleteTreatmentProfile(i)),
+//                 ]
+//             ),
+//             const Divider(
+//               color: Colors.purpleAccent,
+//               thickness: 3,
+//             ),
+//           ],
+//         );
+//       }
+//   );
