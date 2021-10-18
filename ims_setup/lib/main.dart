@@ -116,17 +116,22 @@ class _HomePage extends State<HomePage> {
                       Row(
                         //TODO: Edit so it looks better
                           children: [
-                            Text(
-                              treatmentProfiles[i].name,
-                              style: TextStyle(fontSize: 20),
+                            Padding (
+                              padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                              child:
+                                Text(
+                                  treatmentProfiles[i].name,
+                                  style: TextStyle(fontSize: 20),
+                                )
                             ),
+                            Spacer(),
                             IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile(i)),
                             IconButton(icon: const Icon(Icons.delete), onPressed: () => _deleteTreatmentProfile(i)),
                           ]
                       ),
                       const Divider(
                         color: Colors.black26,
-                        thickness: 3,
+                        thickness: 1,
                       ),
                     ],
                   );
