@@ -83,6 +83,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bluetooth_serial:
+    dependency: "direct dev"
+    description:
+      name: flutter_bluetooth_serial
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -178,7 +185,7 @@ packages:
       name: process
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "4.2.3"
+    version: "4.2.4"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -267,7 +274,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.2.9"
+    version: "2.2.10"
   xdg_directories:
     dependency: transitive
     description:

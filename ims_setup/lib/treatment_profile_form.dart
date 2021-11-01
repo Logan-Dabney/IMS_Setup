@@ -2,22 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:starter_project/Models/all_models.dart';
 import 'package:starter_project/Database/sqlite.dart';
 
-late TreatmentProfile treatmentProfile;
+late TreatmentProfile treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
 final nameOfTreatment = TextEditingController();
 
-// Creating the treatment profile page
-class AddTreatmentProfileForm extends StatefulWidget {
-  const AddTreatmentProfileForm({Key? key}) : super(key: key);
+//TODO: clear when just going back and not saving
+//For multiple buttons with same route
+class TreatmentProfileFormRoute extends StatelessWidget{
+  final String name;
+  bool isEdit;
+
+  TreatmentProfileFormRoute({required this.name, required this.isEdit});
 
   @override
-  _AddTreatmentProfileFormState createState() => _AddTreatmentProfileFormState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+            title: (isEdit) ? Text("Edit Treatment Profile") : Text("New Treatment Profile")
+        ),
+        body: Hero(
+          tag: name,
+          child: TreatmentProfileForm(isEdit: isEdit),
+        )
+    );
+  }
 }
 
-class _AddTreatmentProfileFormState extends State<AddTreatmentProfileForm> {
+// Creating the treatment profile page
+class TreatmentProfileForm extends StatefulWidget {
+  bool isEdit;
+  TreatmentProfileForm({Key? key, required this.isEdit}) : super(key: key);
+
+  @override
+  _TreatmentProfileFormState createState() => _TreatmentProfileFormState();
+}
+
+class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
+  bool _validate = false;
+
   @override
   Widget build(BuildContext context){
     // TODO: set the treatment profile if one was passed to be edited
-    set(null);
     return ListView(
       physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
       shrinkWrap: true,
@@ -26,15 +50,43 @@ class _AddTreatmentProfileFormState extends State<AddTreatmentProfileForm> {
             controller: nameOfTreatment,
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 20),
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               border: OutlineInputBorder(),
               hintText: "Enter Treatment Profile Name",
+              errorText: _validate ? 'Can\'t be empty' : null,
             ),
-          ), // Treatment Name
+          ),
           MuscleProfileForm(), // Form for muscle profiles
-          SaveButton(),
+          ElevatedButton(
+            child: Text("Save", style: TextStyle(fontSize: 25),),
+            style: ElevatedButton.styleFrom(fixedSize: Size.fromHeight(70),),
+            onPressed: () => _pushedSave(),
+          ),
         ]
     );
+  }
+  //Save the treatmeant to treatment profiles
+  // going to have to be a global variable
+  // Can't be inside set state or it wont work.
+  // Set state is specific for that widget
+  // Navigator is a stack for the routes
+  _pushedSave(){
+    if(nameOfTreatment.text != "") {
+      treatmentProfile.name = nameOfTreatment.text;
+      // TODO: work on if they delete a mucle profile
+      if(widget.isEdit){
+        SqliteDB.db.updateTreatmentProfile(treatmentProfile);
+      } else {
+        SqliteDB.db.insertTreatmentProfile(treatmentProfile);
+      }
+      reset();
+      Navigator.of(context).pop();
+    } else {
+      // display error message
+      setState(() {
+        _validate = true;
+      });
+    }
   }
 }
 
@@ -126,7 +178,11 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
                   onPressed: () => _removeMuscleProfile(i),
                 ),
               ],
-            )
+            ),
+            const Divider(
+              color: Colors.black26,
+              thickness: 2,
+            ),
           ],
         );
       },
@@ -137,7 +193,11 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
   _addMuscleProfile(int i){
     setState((){
       // add a blank muscle profile to treatmeantProfile
-      treatmentProfile.muscleProfiles.insert(i++, MuscleProfile(muscles[1],1,1,1));
+      if(i == 0 || (i+1) == treatmentProfile.muscleProfiles.length) {
+        treatmentProfile.muscleProfiles.add(MuscleProfile(muscles[0],1,1,1));
+      } else {
+        treatmentProfile.muscleProfiles.insert(i+1, MuscleProfile(muscles[0],1,1,1));
+      }
     });
   }
 
@@ -276,41 +336,9 @@ class _MuscleDropDownState extends State<MuscleDropDown> {
   }
 }
 
-// Save Button
-class SaveButton extends StatefulWidget {
-  const SaveButton({Key? key}) : super(key: key);
-
-  @override
-  _SaveButtonState createState() => _SaveButtonState();
-}
-
-class _SaveButtonState extends State<SaveButton> {
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      child: Text("Save", style: TextStyle(fontSize: 25),),
-      style: ElevatedButton.styleFrom(fixedSize: Size.fromHeight(70), ) ,
-      onPressed: () => _pushedSave(),
-    );
-  }
-
-  _pushedSave(){
-    treatmentProfile.name = nameOfTreatment.text;
-    SqliteDB.db.insertTreatmentProfile(treatmentProfile);
-    reset();
-    //TODO: Save muscle profiles and treatment profile and reload home page
-      //Save the treatmeant to treatment profiles
-      // going to have to be a global variable
-    // Can't be inside set state or it wont work.
-    // Set state is specific for that widget
-    // Navigator is a stack for the routes
-    Navigator.of(context).pop();
-  }
-}
-
 // reset the variables for the page
 reset() {
-  treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[1],1,1,1)]);
+  treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0],1,1,1)]);
   nameOfTreatment.text = "";
 }
 
@@ -318,13 +346,9 @@ reset() {
 set(var currentTreatmentProfile){
   if(currentTreatmentProfile == null) {
     treatmentProfile =
-        TreatmentProfile("", [MuscleProfile(muscles[1], 1, 1, 1)]);
+        TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
   } else {
     treatmentProfile = currentTreatmentProfile;
+    nameOfTreatment.text = treatmentProfile.name;
   }
 }
-
-
-
-
-

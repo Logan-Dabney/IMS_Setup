@@ -33,6 +33,7 @@ class MuscleProfile{
     id = map[SqliteDB.columnId];
     intensity = map[SqliteDB.columnIntensity];
     pulse = map[SqliteDB.columnPulse];
+    timeDuration = map[SqliteDB.columnTime];
     muscle = muscles[map[SqliteDB.columnMuscleId] - 1];
   }
 }

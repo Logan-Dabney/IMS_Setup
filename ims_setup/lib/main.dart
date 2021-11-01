@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'treatment_profile_form.dart' as treatment_form;
 import 'package:starter_project/Models/all_models.dart';
 import 'package:starter_project/Database/sqlite.dart';
+import 'package:starter_project/Bluetooth/bluetooth_form.dart' as bluetooth;
 
 List<TreatmentProfile> treatmentProfiles = [];
 
@@ -18,18 +19,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'IMS Setup',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
+        brightness: Brightness.dark,
         primarySwatch: Colors.deepPurple,
       ),
-      //home: const MyHomePage(title: 'Flutter Demo Home Page'),
       home: const HomePage(),
     );
   }
@@ -62,16 +54,12 @@ class _HomePage extends State<HomePage> {
   // Loads the add profile page
   void _addTreatmentProfile(){
     Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (BuildContext context){
-            return Scaffold(
-              appBar: AppBar(
-                title: const Text("New Treatment Profile")
-              ),
-              body: const treatment_form.AddTreatmentProfileForm(),
-            );
-          }
-      )
+        MaterialPageRoute(
+            builder: (context) => treatment_form.TreatmentProfileFormRoute(
+                name: "New",
+                isEdit: false
+            )
+        )
     ).then((_) {
       // This block runs when you have returned back to refresh the page
       setState(() {
@@ -82,7 +70,18 @@ class _HomePage extends State<HomePage> {
 
   // Loads the export profiles page
   void _exportProfiles(){
-
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => bluetooth.BluetoothFormRoute(
+                name: "Bluetooth Select",
+            )
+        )
+    ).then((_) {
+      // This block runs when you have returned back to refresh the page
+      setState(() {
+        setVariables();
+      });
+    });
   }
 
   _addBody(){
@@ -125,7 +124,10 @@ class _HomePage extends State<HomePage> {
                                 )
                             ),
                             Spacer(),
-                            IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile(i)),
+                            Hero(
+                              tag: i,
+                              child: IconButton(icon: const Icon(Icons.edit), onPressed: () => _editTreatmentProfile(i)),
+                            ),
                             IconButton(icon: const Icon(Icons.delete), onPressed: () => _deleteTreatmentProfile(i)),
                           ]
                       ),
@@ -138,17 +140,7 @@ class _HomePage extends State<HomePage> {
                 }
                 );
           } else{
-            return Center(
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text(
-                        "No Treatments",
-                        style: TextStyle(fontSize: 50, color: Colors.black26),
-                      )
-                    ]
-                )
-            );
+            return const Text(""); // show nothing while the builder is loading
           }
         },
     );
@@ -156,7 +148,20 @@ class _HomePage extends State<HomePage> {
 
   _editTreatmentProfile(int i){
     //TODO: add database edit and new page to edit data
-    treatment_form.treatmentProfile = treatmentProfiles[i];
+    treatment_form.set(treatmentProfiles[i]);
+    Navigator.of(context).push(
+        MaterialPageRoute(
+            builder: (context) => treatment_form.TreatmentProfileFormRoute(
+                name: "$i",
+                isEdit: true
+            )
+        )
+    ).then((_) {
+      // This block runs when you have returned back to refresh the page
+      setState(() {
+        setVariables();
+      });
+    });
   }
 
   _deleteTreatmentProfile(int i) {
@@ -174,46 +179,3 @@ Future<String> setVariables() async{
   return Future.value("download successful"); // return your response
 }
 
-// If there aren't any saved profiles show text to create on
-// if (treatmentProfiles.isEmpty){
-//   return Center(
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: const [
-//           Text(
-//             "No Treatments",
-//             style: TextStyle(fontSize: 50, color: Colors.black26),
-//           )
-//         ]
-//       )
-//   );
-// }
-
-// If there are saved treatments display them
-// return
-//   ListView.builder(
-//       itemCount: treatmentProfiles.length,
-//       physics: ClampingScrollPhysics(),
-//       shrinkWrap: true,
-//       itemBuilder: (context, i){
-//         return Column(
-//           children: [
-//             Row(
-//               //TODO: Edit so it looks better
-//                 children: [
-//                   Text(
-//                     treatmentProfiles[i].name,
-//                     style: TextStyle(fontSize: 20),
-//                   ),
-//                   IconButton(icon: const Icon(Icons.edit), onPressed: _editTreatmentProfile(i)),
-//                   IconButton(icon: const Icon(Icons.delete), onPressed: () => _deleteTreatmentProfile(i)),
-//                 ]
-//             ),
-//             const Divider(
-//               color: Colors.purpleAccent,
-//               thickness: 3,
-//             ),
-//           ],
-//         );
-//       }
-//   );
