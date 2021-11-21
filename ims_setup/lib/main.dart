@@ -40,14 +40,19 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text("Treatments"),
-          actions: [
-          IconButton(icon: const Icon(Icons.add), onPressed: _addTreatmentProfile),
-          IconButton(icon: const Icon(Icons.import_export), onPressed: _exportProfiles)
-          ],
-        ),
-      body: _addBody(),
+        appBar: AppBar(title: const Text("Treatments"),),
+        body: _addBody(),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              FloatingActionButton(heroTag: "export", child: const Icon(Icons.import_export), onPressed: _exportProfiles, backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
+              FloatingActionButton(heroTag: "addTreatment", child: const Icon(Icons.add), onPressed: _addTreatmentProfile, backgroundColor: Colors.deepPurple, foregroundColor: Colors.white,),
+            ],
+          ),
+      )
     );
   }
 
@@ -74,6 +79,7 @@ class _HomePage extends State<HomePage> {
         MaterialPageRoute(
             builder: (context) => bluetooth.BluetoothFormRoute(
                 name: "Bluetooth Select",
+                treatmentProfiles: treatmentProfiles,
             )
         )
     ).then((_) {

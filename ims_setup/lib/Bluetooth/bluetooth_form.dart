@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:starter_project/Models/all_models.dart';
+import 'package:starter_project/main.dart';
 import 'connection.dart';
+import 'send_treatments.dart';
 
 //For multiple buttons with same route
 class BluetoothFormRoute extends StatelessWidget{
   final String name;
+  List<TreatmentProfile> treatmentProfiles = [];
 
-  BluetoothFormRoute({required this.name});
+  BluetoothFormRoute({required this.name, required this.treatmentProfiles});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +31,9 @@ class BluetoothFormRoute extends StatelessWidget{
             ),
           );
         } else if (future.connectionState == ConnectionState.done) {
-          return Bluetooth_Select();
+          return Bluetooth_Select(treatmentProfiles);
         } else {
-          return Bluetooth_Select();
+          return Bluetooth_Select(treatmentProfiles);
         }
       },
     );
@@ -37,6 +41,10 @@ class BluetoothFormRoute extends StatelessWidget{
 }
 
 class Bluetooth_Select extends StatelessWidget {
+  List<TreatmentProfile> treatmentProfiles = [];
+
+  Bluetooth_Select(this.treatmentProfiles);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -51,7 +59,7 @@ class Bluetooth_Select extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) {
-                    return Text(""); // TODO: Need to create the page once the bluetooth is selected
+                    return exportPage(device: device, treatmentProfiles: treatmentProfiles,);
                   },
                 ),
               );
