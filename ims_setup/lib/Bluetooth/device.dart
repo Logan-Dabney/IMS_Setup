@@ -16,8 +16,8 @@ class BluetoothDeviceListEntry extends StatelessWidget {
       subtitle: Text(device.address.toString()),
       trailing: FlatButton(
         child: Text('Connect'),
-        onPressed: () => onTap,
-        color: Colors.blue,
+        onPressed: () => onTap(),
+        color: Colors.deepPurple,
       ),
     );
   }

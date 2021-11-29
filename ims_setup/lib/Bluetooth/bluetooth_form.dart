@@ -53,7 +53,7 @@ class Bluetooth_Select extends StatelessWidget {
             title: Text('Connection'),
           ),
           body: SelectBondedDevicePage(
-            onCahtPage: (device1) {
+            onExportPage: (device1) {
               BluetoothDevice device = device1;
               Navigator.push(
                 context,
