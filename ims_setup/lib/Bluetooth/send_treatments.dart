@@ -113,27 +113,32 @@ class _exportPageState extends State<exportPage> {
   }
 
   List<int> createMessage(){
-    List<int> message = [numOfChecked];
-    for(int i = 0; i < selectedTreatments.length; i++){
-      // Getting the number of muscle profiles in a specific treatment profile
-      // add to the message
-      int numOfMuscleProfiles = widget.treatmentProfiles[selectedTreatments[i]].muscleProfiles.length;
-      message.add(numOfMuscleProfiles);
-      // iterate through the muslce profiles and add information.
-      for(int a = 0; a < numOfMuscleProfiles; a++){
-        MuscleProfile muscle = widget.treatmentProfiles[selectedTreatments[i]].muscleProfiles[a];
-        message.add(muscle.id!);            // muscle id
-        message.add(0);                    // coarse freq
-        message.add(muscle.pulse.round());         // fine freq
-        message.add(muscle.intensity.round());     // amplitude freq
-        message.add(muscle.timeDuration.round());  // time
+    List<int> message = [];
+    if(numOfChecked != 0) {
+      message.add(numOfChecked);
+
+      for (int i = 0; i < selectedTreatments.length; i++) {
+        // Getting the number of muscle profiles in a specific treatment profile
+        // add to the message
+        int numOfMuscleProfiles = widget
+            .treatmentProfiles[selectedTreatments[i]].muscleProfiles.length;
+        message.add(numOfMuscleProfiles);
+        // iterate through the muslce profiles and add information.
+        for (int a = 0; a < numOfMuscleProfiles; a++) {
+          MuscleProfile muscle = widget.treatmentProfiles[selectedTreatments[i]]
+              .muscleProfiles[a];
+          message.add(muscle.id!); // muscle id
+          message.add(0); // coarse freq
+          message.add(muscle.pulse.round()); // fine freq
+          message.add(muscle.intensity.round()); // amplitude freq
+          message.add(muscle.timeDuration.round()); // time
+        }
       }
+
+      // Putting the number of bytes in the front.
+      // Todo: add that it can't go above a byte long
+      message.insert(0, message.length);
     }
-
-    // Putting the number of bytes in the front.
-    // Todo: add that it can't go above a byte long
-    message.insert(0, message.length);
-
     return message;
   }
 
