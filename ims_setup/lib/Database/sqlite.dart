@@ -114,7 +114,7 @@ class SqliteDB {
 
     // update each muscle profile connected to treatment
     for(int i = 0; i < treatmentProfile.muscleProfiles.length; i++){
-      db.updateMuscleProfile(treatmentProfile.muscleProfiles[0], treatmentProfile.id!, i);
+      db.updateMuscleProfile(treatmentProfile.muscleProfiles[i], treatmentProfile.id!, i);
     }
 
     return await datab.update(

@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:starter_project/Models/all_models.dart';
 import 'package:starter_project/Database/sqlite.dart';
 
-late TreatmentProfile treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
+late TreatmentProfile treatmentProfile =
+TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
 final nameOfTreatment = TextEditingController();
 
 //TODO: clear when just going back and not saving
 //For multiple buttons with same route
-class TreatmentProfileFormRoute extends StatelessWidget{
+class TreatmentProfileFormRoute extends StatelessWidget {
   final String name;
   bool isEdit;
 
@@ -17,19 +18,22 @@ class TreatmentProfileFormRoute extends StatelessWidget{
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: (isEdit) ? Text("Edit Treatment Profile") : Text("New Treatment Profile")
+          title: (isEdit)
+              ? Text("Edit Treatment Profile")
+              : Text("New Treatment Profile"),
+          centerTitle: true,
         ),
         body: Hero(
           tag: name,
           child: TreatmentProfileForm(isEdit: isEdit),
-        )
-    );
+        ));
   }
 }
 
 // Creating the treatment profile page
 class TreatmentProfileForm extends StatefulWidget {
   bool isEdit;
+
   TreatmentProfileForm({Key? key, required this.isEdit}) : super(key: key);
 
   @override
@@ -42,17 +46,18 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
   @override
   void dispose() {
     // clear user input
-    treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0],1,1,1)]);
+    treatmentProfile =
+        TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
     nameOfTreatment.text = "";
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     // TODO: set the treatment profile if one was passed to be edited
     return ListView(
-      physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
-      shrinkWrap: true,
+        physics: AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
+        shrinkWrap: true,
         children: [
           TextField(
             controller: nameOfTreatment,
@@ -66,21 +71,24 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
           ),
           MuscleProfileForm(), // Form for muscle profiles
           ElevatedButton(
-            child: Text("Save", style: TextStyle(fontSize: 25),),
-            style: ElevatedButton.styleFrom(fixedSize: Size.fromHeight(70),),
+            child: Text(
+              "Save",
+              style: TextStyle(fontSize: 25),
+            ),
+            style: ElevatedButton.styleFrom(
+              fixedSize: Size.fromHeight(70),
+            ),
             onPressed: () => _pushedSave(),
           ),
-        ]
-    );
+        ]);
   }
 
-
-  _pushedSave(){
-    if(nameOfTreatment.text != "") {
+  _pushedSave() {
+    if (nameOfTreatment.text != "") {
       treatmentProfile.name = nameOfTreatment.text;
 
       // How it is saved to db depending on editing
-      if(widget.isEdit){
+      if (widget.isEdit) {
         SqliteDB.db.updateTreatmentProfile(treatmentProfile);
       } else {
         SqliteDB.db.insertTreatmentProfile(treatmentProfile);
@@ -114,107 +122,115 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
   //     [global.MuscleProfile(global.muscles[1],0,0,0)]);
   final _biggerFont = TextStyle(fontSize: 18.0);
 
-
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return ListView.builder(
       itemCount: treatmentProfile.muscleProfiles.length,
       physics: ClampingScrollPhysics(),
       shrinkWrap: true,
       itemBuilder: (context, i) {
-        return Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 15),
-              child: Text(
-                "Muscle",
-                textAlign: TextAlign.center,
-                style: _biggerFont,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              child: MuscleDropDown(index: i,),
-            ),
-            Container( // Padding Node that contains an item (Widget)
-              padding: EdgeInsets.only(top: 15),
-              child: Text( // Text Widget
-                "Intensity",
-                textAlign: TextAlign.center,
-                style: _biggerFont,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: IntensitySlider(index: i,),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 15),
-              child: Text(
-                "Pulse",
-                textAlign: TextAlign.center,
-                style: _biggerFont,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: PulseSlider(index: i,),
-            ),
-            Container(
-              padding: EdgeInsets.only(top: 15),
-              child: Text(
-                "Time Duration",
-                textAlign: TextAlign.center,
-                style: _biggerFont,
-              ),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TimeSlider(index: i,),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+        return Card(
+            color: (i.isEven) ? Colors.deepPurpleAccent : Colors.black45,
+            child: Column(
               children: [
-                IconButton(
-                  icon: Icon(Icons.add),
-                  iconSize: 30,
-                  onPressed: () => _addMuscleProfile(i),
+                Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(
+                    "Muscle",
+                    textAlign: TextAlign.center,
+                    style: _biggerFont,
+                  ),
                 ),
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  iconSize: 30,
-                  onPressed: () => _removeMuscleProfile(i),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                  child: MuscleDropDown(
+                    index: i,
+                  ),
+                ),
+                Container(
+                  // Padding Node that contains an item (Widget)
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(
+                    // Text Widget
+                    "Intensity",
+                    textAlign: TextAlign.center,
+                    style: _biggerFont,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: IntensitySlider(
+                    index: i,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(
+                    "Pulse",
+                    textAlign: TextAlign.center,
+                    style: _biggerFont,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: PulseSlider(
+                    index: i,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.only(top: 15),
+                  child: Text(
+                    "Time Duration",
+                    textAlign: TextAlign.center,
+                    style: _biggerFont,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  child: TimeSlider(
+                    index: i,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      iconSize: 30,
+                      onPressed: () => _addMuscleProfile(i),
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      iconSize: 30,
+                      onPressed: () => _removeMuscleProfile(i),
+                    ),
+                  ],
                 ),
               ],
-            ),
-            const Divider(
-              color: Colors.black26,
-              thickness: 2,
-            ),
-          ],
+            )
         );
       },
     );
   }
 
   // Not set to return anything can be thought of a jump to this location
-  _addMuscleProfile(int i){
-    setState((){
+  _addMuscleProfile(int i) {
+    setState(() {
       // add a blank muscle profile to treatmeantProfile
-      if(i == 0 || (i+1) == treatmentProfile.muscleProfiles.length) {
-        treatmentProfile.muscleProfiles.add(MuscleProfile(muscles[0],1,1,1));
+      if (i == 0 || (i + 1) == treatmentProfile.muscleProfiles.length) {
+        treatmentProfile.muscleProfiles.add(MuscleProfile(muscles[0], 1, 1, 1));
       } else {
-        treatmentProfile.muscleProfiles.insert(i+1, MuscleProfile(muscles[0],1,1,1));
+        treatmentProfile.muscleProfiles
+            .insert(i + 1, MuscleProfile(muscles[0], 1, 1, 1));
       }
     });
   }
 
   // Not set to return anything can be thought of a jump to this location
-  _removeMuscleProfile(int i){
-    setState((){
+  _removeMuscleProfile(int i) {
+    setState(() {
       // TODO: maintain a list of the muscle profiles to delete
-      if(treatmentProfile.muscleProfiles.length > 1){
+      if (treatmentProfile.muscleProfiles.length > 1) {
         treatmentProfile.muscleProfiles.removeAt(i);
       }
     });
@@ -224,6 +240,7 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
 // Slider for intensity (V) of muscle profile
 class IntensitySlider extends StatefulWidget {
   int index;
+
   IntensitySlider({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -231,16 +248,19 @@ class IntensitySlider extends StatefulWidget {
 }
 
 class _IntensitySliderState extends State<IntensitySlider> {
-
   @override
   Widget build(BuildContext context) {
-    return Slider(  // Returns a Slider widget
+    return Slider(
+      // Returns a Slider widget
       value: treatmentProfile.muscleProfiles[widget.index].intensity,
       min: 1,
       max: 30,
       divisions: 30,
-      activeColor: Colors.deepPurpleAccent,
-      label: 'Intensity: ${treatmentProfile.muscleProfiles[widget.index].intensity.round().toString()} V',
+      inactiveColor: (widget.index.isEven) ? Colors.black45 : Colors.white,
+      activeColor: (widget.index.isEven) ? Colors.white : Colors.deepPurpleAccent,
+      label:
+      'Intensity: ${treatmentProfile.muscleProfiles[widget.index].intensity
+          .round().toString()} V',
       onChanged: (double value) {
         setState(() {
           treatmentProfile.muscleProfiles[widget.index].intensity = value;
@@ -253,6 +273,7 @@ class _IntensitySliderState extends State<IntensitySlider> {
 // Pulse slider (Hz) of muscle profile
 class PulseSlider extends StatefulWidget {
   int index;
+
   PulseSlider({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -260,7 +281,6 @@ class PulseSlider extends StatefulWidget {
 }
 
 class _PulseSliderState extends State<PulseSlider> {
-
   @override
   Widget build(BuildContext context) {
     return Slider(
@@ -268,8 +288,11 @@ class _PulseSliderState extends State<PulseSlider> {
       min: 1,
       max: 100,
       divisions: 100,
-      activeColor: Colors.deepPurpleAccent,
-      label: 'Pulse: ${treatmentProfile.muscleProfiles[widget.index].pulse.round().toString()} Hz',
+      inactiveColor: (widget.index.isEven) ? Colors.black45 : Colors.white,
+      activeColor: (widget.index.isEven) ? Colors.white : Colors.deepPurpleAccent,
+      label:
+      'Pulse: ${treatmentProfile.muscleProfiles[widget.index].pulse.round()
+          .toString()} Hz',
       onChanged: (double value) {
         setState(() {
           treatmentProfile.muscleProfiles[widget.index].pulse = value;
@@ -282,6 +305,7 @@ class _PulseSliderState extends State<PulseSlider> {
 // Time duration (min) of muscle profile
 class TimeSlider extends StatefulWidget {
   int index;
+
   TimeSlider({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -296,8 +320,11 @@ class _TimeSliderState extends State<TimeSlider> {
       min: 1,
       max: 20,
       divisions: 20,
-      activeColor: Colors.deepPurpleAccent,
-      label: 'Time: ${treatmentProfile.muscleProfiles[widget.index].timeDuration.round().toString()} min',
+      inactiveColor: (widget.index.isEven) ? Colors.black45 : Colors.white,
+      activeColor: (widget.index.isEven) ? Colors.white : Colors.deepPurpleAccent,
+      label:
+      'Time: ${treatmentProfile.muscleProfiles[widget.index].timeDuration
+          .round().toString()} min',
       onChanged: (double value) {
         setState(() {
           treatmentProfile.muscleProfiles[widget.index].timeDuration = value;
@@ -310,6 +337,7 @@ class _TimeSliderState extends State<TimeSlider> {
 // Muscle selection
 class MuscleDropDown extends StatefulWidget {
   int index;
+
   MuscleDropDown({Key? key, required this.index}) : super(key: key);
 
   @override
@@ -327,33 +355,35 @@ class _MuscleDropDownState extends State<MuscleDropDown> {
       isExpanded: true,
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: (widget.index.isEven) ? Colors.black45 : Colors.deepPurpleAccent,
       ),
       onChanged: (int? value) {
         setState(() {
           // have to reset the muscle profile using it's value -1 for the index value
-          treatmentProfile.muscleProfiles[widget.index].muscle = muscles[value! - 1];
+          treatmentProfile.muscleProfiles[widget.index].muscle =
+          muscles[value! - 1];
         });
       },
-      items: muscles.map((Muscle muscle) { //map the muscle list to a dropdown menu item list
+      items: muscles.map((Muscle muscle) {
+        //map the muscle list to a dropdown menu item list
         return DropdownMenuItem(
-          value: muscle.id, // set the value to the id
-          child: Text(muscle.name) // set the text to the name
+            value: muscle.id, // set the value to the id
+            child: Text(muscle.name) // set the text to the name
         );
-      }).toList(),  // turn it to a list
+      }).toList(), // turn it to a list
     );
   }
 }
 
 // reset the variables for the page
 reset() {
-  treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0],1,1,1)]);
+  treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
   nameOfTreatment.text = "";
 }
 
 // set the variables for the page
-set(var currentTreatmentProfile){
-  if(currentTreatmentProfile == null) {
+set(var currentTreatmentProfile) {
+  if (currentTreatmentProfile == null) {
     treatmentProfile =
         TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
   } else {

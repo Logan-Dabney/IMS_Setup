@@ -51,6 +51,7 @@ class Bluetooth_Select extends StatelessWidget {
         child: Scaffold(
           appBar: AppBar(
             title: Text('Connection'),
+            centerTitle: true,
           ),
           body: SelectBondedDevicePage(
             onExportPage: (device1) {
