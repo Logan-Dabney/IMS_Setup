@@ -40,6 +40,14 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
   bool _validate = false;
 
   @override
+  void dispose() {
+    // clear user input
+    treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0],1,1,1)]);
+    nameOfTreatment.text = "";
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context){
     // TODO: set the treatment profile if one was passed to be edited
     return ListView(
@@ -65,21 +73,20 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
         ]
     );
   }
-  //Save the treatmeant to treatment profiles
-  // going to have to be a global variable
-  // Can't be inside set state or it wont work.
-  // Set state is specific for that widget
-  // Navigator is a stack for the routes
+
+
   _pushedSave(){
     if(nameOfTreatment.text != "") {
       treatmentProfile.name = nameOfTreatment.text;
-      // TODO: work on if they delete a mucle profile
+
+      // How it is saved to db depending on editing
       if(widget.isEdit){
         SqliteDB.db.updateTreatmentProfile(treatmentProfile);
       } else {
         SqliteDB.db.insertTreatmentProfile(treatmentProfile);
       }
-      reset();
+
+      //return home
       Navigator.of(context).pop();
     } else {
       // display error message
@@ -106,6 +113,8 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
   // global.TreatmentProfile treatmentProfile = global.TreatmentProfile("",
   //     [global.MuscleProfile(global.muscles[1],0,0,0)]);
   final _biggerFont = TextStyle(fontSize: 18.0);
+
+
 
   @override
   Widget build(BuildContext context){

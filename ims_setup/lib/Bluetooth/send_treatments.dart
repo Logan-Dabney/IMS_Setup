@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -41,6 +40,9 @@ class _exportPageState extends State<exportPage> {
       isDisconnecting = true;
       connection.dispose();
     }
+
+    numOfChecked = 0;
+    selectedTreatments = [];
     super.dispose();
   }
 
@@ -72,7 +74,6 @@ class _exportPageState extends State<exportPage> {
                 physics: ClampingScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, i){
-                  bool isSelected = false;
                   return Column(
                     children: [
                       Row(
@@ -116,27 +117,24 @@ class _exportPageState extends State<exportPage> {
     List<int> message = [];
     if(numOfChecked != 0) {
       message.add(numOfChecked);
-
       for (int i = 0; i < selectedTreatments.length; i++) {
         // Getting the number of muscle profiles in a specific treatment profile
         // add to the message
-        int numOfMuscleProfiles = widget
-            .treatmentProfiles[selectedTreatments[i]].muscleProfiles.length;
+        int numOfMuscleProfiles = widget.treatmentProfiles[selectedTreatments[i]].muscleProfiles.length;
         message.add(numOfMuscleProfiles);
-        // iterate through the muslce profiles and add information.
+
+        // iterate through the muscle profiles and add information.
         for (int a = 0; a < numOfMuscleProfiles; a++) {
-          MuscleProfile muscle = widget.treatmentProfiles[selectedTreatments[i]]
-              .muscleProfiles[a];
-          message.add(muscle.id!); // muscle id
-          message.add(0); // coarse freq
-          message.add(muscle.pulse.round()); // fine freq
-          message.add(muscle.intensity.round()); // amplitude freq
+          MuscleProfile muscle = widget.treatmentProfiles[selectedTreatments[i]].muscleProfiles[a];
+          message.add(muscle.id!);                  // muscle id
+          message.add(0);                           // coarse freq
+          message.add(muscle.pulse.round());        // fine freq
+          message.add(muscle.intensity.round());    // amplitude freq
           message.add(muscle.timeDuration.round()); // time
         }
       }
 
       // Putting the number of bytes in the front.
-      // Todo: add that it can't go above a byte long
       message.insert(0, message.length);
     }
     return message;
@@ -170,14 +168,15 @@ class _exportPageState extends State<exportPage> {
 
   void _sendMessage(List<int> message) async {
     textEditingController.clear();
-
     if (message.isNotEmpty) {
       try {
         connection.output.add(Uint8List.fromList(message)); // "\r\n terminator charactors"
         await connection.output.allSent;
 
-        // TODO: pop page from navigator
+        Navigator.popUntil(context, (route) => route.isFirst);
       } catch (e) {
+
+        // TODO: Produce error messages
         // Ignore error, but notify state
         setState(() {});
       }
@@ -220,32 +219,3 @@ class _TreatmentCheckBoxState extends State<TreatmentCheckBox> {
     );
   }
 }
-
-
-// await BluetoothConnection.toAddress(widget.device.address).then((_connection) {
-//   print('Connected to the device');
-//   connection = _connection;
-//   setState(() {
-//     isConnecting = false;
-//     isDisconnecting = false;
-//   });
-//
-//   connection.input!.listen(_onDataReceived).onDone(() {
-//     // There should be `isDisconnecting` flag to show are we are (locally)
-//     // in middle of disconnecting process, should be set before calling
-//     // `dispose`, `finish` or `close`, which all causes to disconnect.
-//     // If we except the disconnection, `onDone` should be fired as result.
-//     // If we didn't except this (no flag set), it means closing by remote.
-//     if (isDisconnecting) {
-//       print('Disconnecting locally!');
-//     } else {
-//       print('Disconnected remotely!');
-//     }
-//     if (this.mounted) {
-//       setState(() {});
-//     }
-//   });
-// }).catchError((error) {
-//   print('Cannot connect, exception occured');
-//   print(error);
-// });
