@@ -1,9 +1,16 @@
+/// File: treatment_profile_form.dart
+/// Author: Logan Dabney (@Logan-Dabney)
+/// Version: 0.1
+/// Date: 2021-10-06
+/// Copyright: Copyright (c) 2021
+
 import 'package:flutter/material.dart';
 import 'package:starter_project/Models/all_models.dart';
 import 'package:starter_project/Database/sqlite.dart';
 
-late TreatmentProfile treatmentProfile =
-    TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
+late TreatmentProfile treatmentProfile = TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
+List<int> addedMuscleProfiles = [];
+List<MuscleProfile> deletedMuscleProfiles = [];
 final nameOfTreatment = TextEditingController();
 
 //TODO: clear when just going back and not saving
@@ -41,6 +48,8 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
     treatmentProfile =
         TreatmentProfile("", [MuscleProfile(muscles[0], 1, 1, 1)]);
     nameOfTreatment.text = "";
+    addedMuscleProfiles = [];
+    deletedMuscleProfiles = [];
     super.dispose();
   }
 
@@ -100,7 +109,7 @@ class _TreatmentProfileFormState extends State<TreatmentProfileForm> {
 
       // How it is saved to db depending on editing
       if (widget.isEdit) {
-        SqliteDB.db.updateTreatmentProfile(treatmentProfile);
+        SqliteDB.db.updateTreatmentProfile(treatmentProfile, addedMuscleProfiles, deletedMuscleProfiles);
       } else {
         SqliteDB.db.insertTreatmentProfile(treatmentProfile);
       }
@@ -254,9 +263,11 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
     setState(() {
       // add a blank muscle profile to treatmeantProfile
       if (i == 0 || (i + 1) == treatmentProfile.muscleProfiles.length) {
+        addedMuscleProfiles.add(treatmentProfile.muscleProfiles.length);
         treatmentProfile.muscleProfiles.add(MuscleProfile(muscles[0], 1, 1, 1));
       } else {
         treatmentProfile.muscleProfiles.insert(i + 1, MuscleProfile(muscles[0], 1, 1, 1));
+        addedMuscleProfiles.add(i + 1);
       }
     });
   }
@@ -266,6 +277,7 @@ class _MuscleProfileFormState extends State<MuscleProfileForm> {
     setState(() {
       // TODO: maintain a list of the muscle profiles to delete
       if (treatmentProfile.muscleProfiles.length > 1) {
+        deletedMuscleProfiles.add(treatmentProfile.muscleProfiles[i]);
         treatmentProfile.muscleProfiles.removeAt(i);
       }
     });

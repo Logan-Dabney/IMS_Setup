@@ -1,3 +1,9 @@
+/// File: send_treatments.dart
+/// Author: Logan Dabney (@Logan-Dabney)
+/// Version: 0.1
+/// Date: 2021-10-06
+/// Copyright: Copyright (c) 2021
+
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
@@ -126,7 +132,7 @@ class _exportPageState extends State<exportPage> {
         // iterate through the muscle profiles and add information.
         for (int a = 0; a < numOfMuscleProfiles; a++) {
           MuscleProfile muscle = widget.treatmentProfiles[selectedTreatments[i]].muscleProfiles[a];
-          message.add(muscle.id!);                  // muscle id
+          message.add(muscle.muscle.id);                  // muscle id
           message.add(0);                           // coarse freq
           message.add(muscle.pulse.round());        // fine freq
           message.add(muscle.intensity.round());    // amplitude freq

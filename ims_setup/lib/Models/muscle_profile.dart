@@ -1,3 +1,9 @@
+/// File: muscle_profile.dart
+/// Author: Logan Dabney (@Logan-Dabney)
+/// Version: 0.1
+/// Date: 2021-10-06
+/// Copyright: Copyright (c) 2021
+///
 import 'package:starter_project/Database/sqlite.dart';
 import 'muscle.dart';
 

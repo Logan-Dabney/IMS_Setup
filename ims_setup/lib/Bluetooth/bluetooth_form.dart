@@ -1,7 +1,12 @@
+/// File: bluetooth_form.dart
+/// Author: Logan Dabney (@Logan-Dabney)
+/// Version: 0.1
+/// Date: 2021-10-06
+/// Copyright: Copyright (c) 2021
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:starter_project/Models/all_models.dart';
-import 'package:starter_project/main.dart';
 import 'connection.dart';
 import 'send_treatments.dart';
 

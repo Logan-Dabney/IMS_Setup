@@ -1,3 +1,9 @@
+/// File: sqlite.dart
+/// Author: Logan Dabney (@Logan-Dabney)
+/// Version: 0.1
+/// Date: 2021-10-06
+/// Copyright: Copyright (c) 2021
+
 import "dart:io" as io;
 import "package:path/path.dart";
 import 'package:sqflite/sqflite.dart';
@@ -109,8 +115,21 @@ class SqliteDB {
     );
   }
 
-  Future<int> updateTreatmentProfile(TreatmentProfile treatmentProfile) async{
+  Future<int> updateTreatmentProfile(TreatmentProfile treatmentProfile, List<int> added, List<MuscleProfile> deleted) async{
     final datab = await database;
+
+    if(deleted.length != 0){
+      for(int i = 0; i < deleted.length; i++){
+        db.deleteMuscleProfile(deleted.elementAt(i).id!);
+      }
+    }
+
+    if(added.length != 0){
+      for(int i = 0; i < added.length; i++){
+        var index = added.elementAt(i);
+        db.insertMuscleProfile(treatmentProfile.muscleProfiles[added.elementAt(i)], treatmentProfile.id!, added.elementAt(i));
+      }
+    }
 
     // update each muscle profile connected to treatment
     for(int i = 0; i < treatmentProfile.muscleProfiles.length; i++){

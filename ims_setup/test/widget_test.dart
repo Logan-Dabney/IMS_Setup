@@ -7,6 +7,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/widgets.dart';
+import 'dart:ui' as ui;
 
 import 'package:starter_project/main.dart';
 
@@ -16,15 +18,14 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('IMS Setup'), findsOneWidget);
+    expect(find.text('Muscle Order: '), findsWidgets);
 
     // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    await tester.tap(find.byIcon(Icons.import_export));
     await tester.pump();
+    await tester.tap(find.byIcon(Icons.edit));
+    await tester.tap(find.byIcon(Icons.delete));
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
   });
 }
